@@ -25,6 +25,11 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLogin, onRegisterClick }
     return (
         <div className="min-h-screen bg-[#000000] flex flex-col items-center justify-center p-6 relative overflow-hidden font-['Cairo']">
             {/* عناصر الخلفية المتحركة */}
+            <div className="absolute inset-0 opacity-20 transition-opacity duration-1000">
+                <img src="/banner.jpg" alt="Banner" className="w-full h-full object-cover scale-110 blur-sm" />
+                <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black"></div>
+            </div>
+
             <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-club-yellow/5 blur-[120px] rounded-full animate-pulse-slow"></div>
             <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-club-gold/5 blur-[120px] rounded-full animate-pulse-slow"></div>
 

@@ -16,7 +16,7 @@ import {
 /**
  * رابط شعار النادي الرسمي
  */
-export const CLUB_LOGO_URL = "https://upload.wikimedia.org/wikipedia/ar/d/dc/Al_Mokawloon_Al_Arab_SC_logo.png";
+export const CLUB_LOGO_URL = "/logo.jpg";
 
 /**
  * ألوان الهوية البصرية للنادي (ثيم بريميوم)
@@ -104,7 +104,7 @@ export const MOCK_SUBSCRIPTIONS: SubscriptionRequest[] = [
         phoneNumber: '01234567890',
         status: 'PENDING',
         dateApplied: '2023-10-20',
-        idCardImage: 'https://i.ibb.co/C0j36zB/id-card-sample.png'
+        idCardImage: 'https://mostaql.com/portfolio/2116553-%D9%83%D8%A7%D8%B1%D9%86%D9%8A%D9%87-%D8%B9%D8%B6%D9%88%D9%8A%D8%A9'
     }
 ];
 
