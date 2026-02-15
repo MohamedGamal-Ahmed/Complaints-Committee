@@ -24,15 +24,22 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onBack, onSubmit }) 
         name: '',
         phone: '',
         memberId: '',
+        password: '',
+        confirmPassword: '',
         idImage: null as string | null
     });
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        if (formData.password !== formData.confirmPassword) {
+            alert('كلمات المرور غير متطابقة');
+            return;
+        }
         onSubmit({
             applicantName: formData.name,
             phoneNumber: formData.phone,
             memberId: formData.memberId,
+            password: formData.password,
             idCardImage: formData.idImage || undefined,
             status: 'PENDING',
             dateApplied: new Date().toISOString().split('T')[0]
@@ -91,6 +98,34 @@ export const RegisterView: React.FC<RegisterViewProps> = ({ onBack, onSubmit }) 
                                     value={formData.phone}
                                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                                     className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 pr-12 text-white focus:outline-none focus:ring-2 focus:ring-club-yellow/50 transition-all text-right"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="block text-gray-500 text-xs font-bold mr-2 uppercase tracking-wider">كلمة المرور</label>
+                            <div className="relative">
+                                <input
+                                    required
+                                    type="password"
+                                    placeholder="********"
+                                    value={formData.password}
+                                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white focus:outline-none focus:ring-2 focus:ring-club-yellow/50 transition-all text-right"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="block text-gray-500 text-xs font-bold mr-2 uppercase tracking-wider">تأكيد كلمة المرور</label>
+                            <div className="relative">
+                                <input
+                                    required
+                                    type="password"
+                                    placeholder="********"
+                                    value={formData.confirmPassword}
+                                    onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white focus:outline-none focus:ring-2 focus:ring-club-yellow/50 transition-all text-right"
                                 />
                             </div>
                         </div>

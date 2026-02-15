@@ -6,20 +6,22 @@
 import React, { useState } from 'react';
 import { UserRole } from '../types';
 import { ClubLogo } from './Common';
+import { ChevronDown, Fingerprint, LucideIcon, User as UserIcon, Shield, Briefcase } from 'lucide-react';
 
 interface LoginViewProps {
-    onLogin: (role: UserRole, memberId: string) => void;
+    onLogin: (role: UserRole, memberId: string, password?: string) => void;
     onRegisterClick: () => void;
 }
 
 export const LoginView: React.FC<LoginViewProps> = ({ onLogin, onRegisterClick }) => {
     const [memberId, setMemberId] = useState('');
     const [password, setPassword] = useState('');
-    const [isAdminMode, setIsAdminMode] = useState(false);
+    const [role, setRole] = useState<UserRole>(UserRole.MEMBER);
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        onLogin(isAdminMode ? UserRole.ADMIN : UserRole.MEMBER, memberId);
+        onLogin(role, memberId, password);
     };
 
     return (
@@ -50,36 +52,55 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLogin, onRegisterClick }
                     <div className="absolute top-0 right-0 w-32 h-32 bg-club-yellow/5 blur-3xl -mr-16 -mt-16"></div>
 
                     {/* تبديل وضع الدخول */}
-                    <div className="flex bg-white/5 p-1.5 rounded-2xl mb-8">
+                    {/* قائمة منسدلة لاختيار الدور */}
+                    <div className="relative mb-8">
+                        <label className="block text-gray-500 text-[10px] font-black mr-2 mb-2 uppercase tracking-[0.2em]">هوية المستخدم</label>
                         <button
-                            onClick={() => setIsAdminMode(false)}
-                            className={`flex-1 py-3 rounded-xl text-sm font-bold transition-all duration-300 ${!isAdminMode ? 'bg-club-yellow text-black shadow-lg' : 'text-gray-500 hover:text-gray-400'}`}
+                            type="button"
+                            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                            className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 flex items-center justify-between text-white hover:bg-white/[0.08] transition-all"
                         >
-                            دخول الأعضاء
+                            <div className="flex items-center gap-3">
+                                {role === UserRole.MEMBER ? <UserIcon className="w-4 h-4 text-club-yellow" /> : role === UserRole.STAFF ? <Briefcase className="w-4 h-4 text-club-yellow" /> : <Shield className="w-4 h-4 text-club-yellow" />}
+                                <span className="text-sm font-bold">
+                                    {role === UserRole.MEMBER ? 'أنا عضو في النادي' : role === UserRole.STAFF ? 'أنا موظف تنفيذي' : 'إدارة النظام'}
+                                </span>
+                            </div>
+                            <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
                         </button>
-                        <button
-                            onClick={() => setIsAdminMode(true)}
-                            className={`flex-1 py-3 rounded-xl text-sm font-bold transition-all duration-300 ${isAdminMode ? 'bg-club-yellow text-black shadow-lg' : 'text-gray-500 hover:text-gray-400'}`}
-                        >
-                            الإدارة
-                        </button>
-                    </div>
 
-                    <h2 className="text-xl font-black text-white mb-8 text-center">
-                        {isAdminMode ? 'تسجيل دخول المشرفين' : 'تسجيل دخول الأعضاء'}
-                    </h2>
+                        {isDropdownOpen && (
+                            <div className="absolute top-full left-0 right-0 mt-2 bg-[#1a1a1c] border border-white/10 rounded-2xl overflow-hidden z-30 shadow-2xl animate-scale-up">
+                                {[
+                                    { r: UserRole.MEMBER, l: 'أنا عضو في النادي', i: UserIcon },
+                                    { r: UserRole.STAFF, l: 'أنا موظف تنفيذي', i: Briefcase },
+                                    { r: UserRole.ADMIN, l: 'إدارة النظام', i: Shield }
+                                ].map((item) => (
+                                    <button
+                                        key={item.r}
+                                        type="button"
+                                        onClick={() => { setRole(item.r); setIsDropdownOpen(false); }}
+                                        className={`w-full px-5 py-4 flex items-center gap-4 hover:bg-club-yellow/10 transition-colors text-right ${role === item.r ? 'bg-club-yellow/5 text-club-yellow' : 'text-gray-444'}`}
+                                    >
+                                        <item.i className="w-4 h-4" />
+                                        <span className="text-sm font-bold">{item.l}</span>
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                    </div>
 
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div className="space-y-2">
                             <label className="block text-gray-500 text-xs font-bold mr-2 uppercase tracking-wider">
-                                {isAdminMode ? 'اسم المستخدم' : 'رقم العضوية'}
+                                {role === UserRole.ADMIN ? 'اسم المشرف' : role === UserRole.STAFF ? 'كود الموظف' : 'رقم العضوية'}
                             </label>
                             <input
                                 type="text"
                                 value={memberId}
                                 onChange={(e) => setMemberId(e.target.value)}
-                                placeholder={isAdminMode ? "admin" : "102030"}
-                                className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white focus:outline-none focus:ring-2 focus:ring-club-yellow/50 transition-all text-right placeholder:text-gray-700"
+                                placeholder={role === UserRole.ADMIN ? "ADMIN01" : role === UserRole.STAFF ? "STAFF01" : "102030"}
+                                className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white focus:outline-none focus:ring-2 focus:ring-club-yellow/50 transition-all text-right placeholder:text-gray-700 font-bold"
                             />
                         </div>
                         <div className="space-y-2">
@@ -93,15 +114,25 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLogin, onRegisterClick }
                             />
                         </div>
 
-                        <button
-                            type="submit"
-                            className="w-full bg-club-yellow hover:bg-club-gold text-black font-black py-4 rounded-2xl mt-4 transition-all duration-300 shadow-[0_10px_30px_rgba(255,204,0,0.2)] active:scale-95 transform"
-                        >
-                            تسجيل الدخول
-                        </button>
+                        <div className="flex gap-4 mt-4">
+                            <button
+                                type="submit"
+                                className="flex-[3] bg-club-yellow hover:bg-club-gold text-black font-black py-4 rounded-2xl transition-all duration-300 shadow-[0_10px_30px_rgba(255,204,0,0.2)] active:scale-95 transform"
+                            >
+                                تسجيل الدخول
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => alert('محاكاة تسجيل الدخول بالبصمة / الوجه...')}
+                                className="flex-1 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center text-club-yellow hover:bg-white/10 transition-all active:scale-95"
+                                title="الدخول بالبصمة"
+                            >
+                                <Fingerprint className="w-7 h-7" />
+                            </button>
+                        </div>
                     </form>
 
-                    {!isAdminMode && (
+                    {role === UserRole.MEMBER && (
                         <div className="mt-8 text-center border-t border-white/5 pt-6">
                             <p className="text-gray-500 text-sm">
                                 ليس لديك حساب؟ <span onClick={onRegisterClick} className="text-club-yellow cursor-pointer hover:text-club-gold transition-colors font-bold">تسجيل مشترك جديد</span>
@@ -112,7 +143,10 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLogin, onRegisterClick }
             </div>
 
             <div className="absolute bottom-8 text-gray-700 text-[10px] font-bold tracking-widest uppercase text-center w-full">
-                © 2024 نادي المقاولون العرب - جميع الحقوق محفوظة
+                نادي المقاولون العرب - جميع الحقوق محفوظة
+                © 2026
+                <br />
+                By: Eng. Mohamed Gamal
             </div>
         </div>
     );

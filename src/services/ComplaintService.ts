@@ -57,11 +57,14 @@ export class ComplaintService {
             priority: data.priority || Priority.MEDIUM,
             dateCreated: new Date().toISOString(),
             lastUpdated: new Date().toISOString(),
+            memberId: user.memberId, // حفظ رقم العضوية للبحث
+            userPhone: user.phoneNumber, // حفظ رقم التليفون للتواصل
             history: [{
                 status: ComplaintStatus.NEW,
                 date: new Date().toISOString(),
                 updatedBy: 'USER'
-            }]
+            }],
+            messages: [] // تهيئة مصفوفة المحادثة
         };
 
         this.complaints = [newComplaint, ...this.complaints];
@@ -97,12 +100,79 @@ export class ComplaintService {
     }
 
     /**
+     * إرسال رسالة في المحادثة
+     */
+    addMessage(id: string, sender: User, text: string): void {
+        this.complaints = this.complaints.map(c => {
+            if (c.id === id) {
+                const newMessage = {
+                    id: `MSG-${Date.now()}`,
+                    senderId: sender.id,
+                    senderName: sender.name,
+                    senderRole: sender.role,
+                    text,
+                    date: new Date().toISOString()
+                };
+                return {
+                    ...c,
+                    messages: [...c.messages, newMessage],
+                    lastUpdated: new Date().toISOString()
+                };
+            }
+            return c;
+        });
+    }
+
+    /**
+     * تقييم الشكوى بعد الحل
+     */
+    addFeedback(id: string, rating: number, feedback?: string): void {
+        this.complaints = this.complaints.map(c => {
+            if (c.id === id) {
+                return { ...c, rating, feedback, lastUpdated: new Date().toISOString() };
+            }
+            return c;
+        });
+    }
+
+    /**
+     * تكليف موظف بمهمة داخلية
+     */
+    assignTask(id: string, staffName: string, expectedDate?: string): void {
+        this.complaints = this.complaints.map(c => {
+            if (c.id === id) {
+                return {
+                    ...c,
+                    assignedTo: staffName,
+                    assignmentDate: new Date().toISOString(),
+                    expectedResolution: expectedDate,
+                    status: ComplaintStatus.IN_PROGRESS, // تغيير الحالة تلقائياً
+                    lastUpdated: new Date().toISOString()
+                };
+            }
+            return c;
+        });
+    }
+
+    /**
      * ترشيح الشكاوى بناءً على الحالة
      * @param status الحالة المطلوبة
      */
     filterByStatus(status: ComplaintStatus | 'ALL'): Complaint[] {
         if (status === 'ALL') return this.complaints;
         return this.complaints.filter(c => c.status === status);
+    }
+
+    /**
+     * تحديث أولوية الشكوى
+     */
+    updatePriority(id: string, priority: Priority): void {
+        this.complaints = this.complaints.map(c => {
+            if (c.id === id) {
+                return { ...c, priority, lastUpdated: new Date().toISOString() };
+            }
+            return c;
+        });
     }
 }
 

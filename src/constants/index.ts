@@ -10,7 +10,9 @@ import {
     ComplaintCategory,
     ComplaintStatus,
     Priority,
-    SubscriptionRequest
+    SubscriptionRequest,
+    Announcement,
+    Department
 } from '../types';
 
 /**
@@ -61,6 +63,7 @@ export const MOCK_COMPLAINTS: Complaint[] = [
         id: 'REQ-2023-089',
         userId: 'u2',
         userName: 'أحمد حسن',
+        memberId: '203040',
         category: ComplaintCategory.SPORTS,
         subject: 'عطل في تكييف القاعة الرئيسية',
         details: 'القاعة بحاجة لصيانة عاجلة قبل الحفل السنوي، التكييف لا يعمل بكفاءة.',
@@ -71,12 +74,14 @@ export const MOCK_COMPLAINTS: Complaint[] = [
         history: [
             { status: ComplaintStatus.NEW, date: '2023-10-12T10:00:00', updatedBy: 'USER' },
             { status: ComplaintStatus.UNDER_REVIEW, date: '2023-10-12T12:00:00', note: 'تم تحويل الطلب للإدارة الهندسية', updatedBy: 'ADMIN' }
-        ]
+        ],
+        messages: []
     },
     {
         id: 'REQ-2023-084',
         userId: 'u1',
         userName: 'أحمد محمد',
+        memberId: '102030',
         category: ComplaintCategory.SWIMMING,
         subject: 'سوء نظافة حمام السباحة',
         details: 'يرجى متابعة شركات النظافة، المياه ليست نقية بما يكفي اليوم.',
@@ -89,7 +94,8 @@ export const MOCK_COMPLAINTS: Complaint[] = [
             { status: ComplaintStatus.NEW, date: '2023-10-05T09:30:00', updatedBy: 'USER' },
             { status: ComplaintStatus.IN_PROGRESS, date: '2023-10-06T10:00:00', note: 'جار العمل على التنظيف', updatedBy: 'ADMIN' },
             { status: ComplaintStatus.SOLVED, date: '2023-10-07T14:00:00', note: 'تم الانتهاء', updatedBy: 'ADMIN' }
-        ]
+        ],
+        messages: []
     }
 ];
 
@@ -109,3 +115,61 @@ export const MOCK_SUBSCRIPTIONS: SubscriptionRequest[] = [
 ];
 
 export const CATEGORIES_LIST = Object.values(ComplaintCategory);
+
+/**
+ * قائمة الإعلانات المبدئية
+ */
+export const MOCK_ANNOUNCEMENTS: Announcement[] = [
+    {
+        id: '1',
+        title: 'تحديث مواعيد حمامات السباحة',
+        content: 'يرجى العلم بأنه تم تمديد فترة العمل الصباحية لساعة إضافية لجميع الأعضاء ابتداءً من الأسبوع القادم.',
+        date: '2024-02-15T08:00:00',
+        category: 'ALERT',
+        isUrgent: true
+    },
+    {
+        id: '2',
+        title: 'بطولة التنس ربيع 2024',
+        content: 'باب الاشتراك متاح الآن في السكرتارية الرياضية لجميع الفئات العمرية. جوائز قيمة للفائزين.',
+        date: '2024-02-14T10:00:00',
+        category: 'EVENT'
+    }
+];
+
+/**
+ * قائمة الأقسام الافتراضية
+ */
+export const MOCK_DEPARTMENTS: Department[] = [
+    { id: 'dep-1', name: 'الصيانة' },
+    { id: 'dep-2', name: 'الكهرباء' },
+    { id: 'dep-3', name: 'النظافة' },
+    { id: 'dep-4', name: 'الأمن' },
+    { id: 'dep-5', name: 'حمامات السباحة' },
+    { id: 'dep-6', name: 'المطاعم والكافيتريا' },
+    { id: 'dep-7', name: 'خدمة العملاء' },
+];
+
+/**
+ * قائمة الموظفين الافتراضية
+ */
+export const MOCK_STAFF: User[] = [
+    {
+        id: 'a1',
+        name: 'مدير النظام',
+        memberId: 'ADMIN01',
+        role: UserRole.ADMIN,
+        photoUrl: 'https://picsum.photos/100/100?grayscale',
+        password: 'admin123',
+        department: 'الإدارة'
+    },
+    {
+        id: 's1',
+        name: 'فني الصيانة',
+        memberId: 'STAFF01',
+        role: UserRole.STAFF,
+        photoUrl: 'https://picsum.photos/100/100?tech',
+        password: 'staff123',
+        department: 'الصيانة'
+    }
+];

@@ -9,7 +9,8 @@
  */
 export enum UserRole {
     MEMBER = 'MEMBER', // عضو النادي
-    ADMIN = 'ADMIN'    // مدير النظام
+    ADMIN = 'ADMIN',    // مدير النظام
+    STAFF = 'STAFF'     // موظف
 }
 
 /**
@@ -41,6 +42,14 @@ export enum ComplaintCategory {
 }
 
 /**
+ * واجهة بيانات القسم
+ */
+export interface Department {
+    id: string;
+    name: string;
+}
+
+/**
  * مستويات الأولوية للشكاوى
  */
 export enum Priority {
@@ -61,12 +70,27 @@ export interface ComplaintHistoryLog {
 }
 
 /**
+ * واجهة رسائل المحادثة داخل الشكوى
+ */
+export interface ChatMessage {
+    id: string;
+    senderId: string;
+    senderName: string;
+    senderRole: UserRole;
+    text: string;
+    date: string;
+    attachments?: string[];
+}
+
+/**
  * واجهة بيانات الشكوى الكاملة
  */
 export interface Complaint {
     id: string;
     userId: string;
     userName: string;
+    memberId?: string; // أضفنا رقم العضوية هنا للبحث
+    userPhone?: string; // رقم تليفون العضو للتواصل
     userPhoto?: string;
     category: ComplaintCategory;
     subject: string;
@@ -78,6 +102,12 @@ export interface Complaint {
     attachments?: string[];
     resolutionNotes?: string;
     history: ComplaintHistoryLog[];
+    messages: ChatMessage[]; // المحادثة المباشرة
+    rating?: number; // تقييم 1-5
+    feedback?: string; // تعليق العضو على الحل
+    assignedTo?: string; // الموظف المكلف بالمهمة (داخلي)
+    assignmentDate?: string; // تاريخ التكليف
+    expectedResolution?: string; // التاريخ المتوقع للحل
 }
 
 /**
@@ -90,6 +120,8 @@ export interface User {
     role: UserRole;
     photoUrl: string;
     phoneNumber?: string;
+    password?: string;
+    department?: string; // اسم القسم المنتمي إليه (للموظفين)
 }
 
 /**
@@ -104,4 +136,17 @@ export interface SubscriptionRequest {
     status: 'PENDING' | 'APPROVED' | 'REJECTED';
     rejectionReason?: string;
     dateApplied: string;
+    password?: string; // كلمة المرور التي اختارها المستخدم
+}
+
+/**
+ * واجهة الإعلانات والتنبيهات
+ */
+export interface Announcement {
+    id: string;
+    title: string;
+    content: string;
+    date: string;
+    category: 'NEWS' | 'ALERT' | 'EVENT';
+    isUrgent?: boolean;
 }

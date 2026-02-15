@@ -14,22 +14,40 @@ export class AuthService {
      * @param memberId رقم العضوية أو اسم المستخدم
      * @param isAdminMode هل الدخول كمدير؟
      */
-    async login(memberId: string, isAdminMode: boolean): Promise<User> {
-        // في الواقع هنا يتم التحقق من قاعدة البيانات، هنا نستخدم بيانات تجريبية
-        return new Promise((resolve) => {
+    async login(memberId: string, password?: string, role: UserRole = UserRole.MEMBER): Promise<User> {
+        return new Promise((resolve, reject) => {
             setTimeout(() => {
-                if (isAdminMode) {
-                    this.currentUser = MOCK_ADMIN;
+                // محاكاة التحقق من البيانات
+                if (role === UserRole.ADMIN && memberId === 'ADMIN01') {
+                    this.currentUser = { ...MOCK_ADMIN };
+                    resolve(this.currentUser);
+                } else if (role === UserRole.STAFF && memberId === 'STAFF01') {
+                    // إضافة موظف تجريبي في الخدمة
+                    this.currentUser = {
+                        id: 's1',
+                        name: 'فني الصيانة (تجريبي)',
+                        memberId: 'STAFF01',
+                        role: UserRole.STAFF,
+                        photoUrl: 'https://picsum.photos/100/100?tech'
+                    };
+                    resolve(this.currentUser);
+                } else if (role === UserRole.MEMBER && memberId === '102030') {
+                    this.currentUser = { ...MOCK_USER };
+                    resolve(this.currentUser);
                 } else {
-                    // محاكاة إذا كان يحاول الدخول كمدير من واجهة الأعضاء
-                    if (memberId.toLowerCase().includes('admin')) {
-                        this.currentUser = MOCK_ADMIN;
-                    } else {
-                        this.currentUser = MOCK_USER;
-                    }
+                    // في حالة عدم المطابقة للمستخدمين التجريبيين
+                    // ننشئ مستخدم جديد بـ ID فريد حتى لا يرى شكاوى مستخدمين آخرين
+                    const uniqueId = `user-${memberId}-${Date.now()}`;
+                    this.currentUser = {
+                        id: uniqueId,
+                        memberId,
+                        name: role === UserRole.ADMIN ? 'مشرف تجريبي' : role === UserRole.STAFF ? 'موظف تجريبي' : memberId,
+                        role: role,
+                        photoUrl: `https://picsum.photos/100/100?sig=${Date.now()}`
+                    };
+                    resolve(this.currentUser);
                 }
-                resolve(this.currentUser);
-            }, 500); // تأخير بسيط لمحاكاة طلب الشبكة
+            }, 500);
         });
     }
 
